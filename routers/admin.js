@@ -15,7 +15,7 @@ adminRouter.get("/users", async function (req, res) {
   res.end()
 })
 
-// API #9 List all classes with pupils and subjects
+// API #4 List all classes with pupils and subjects
 adminRouter.get("/classes", async function (req, res) {
   const classes = await getDB().any("SELECT NAME FROM CLASS;")
 
