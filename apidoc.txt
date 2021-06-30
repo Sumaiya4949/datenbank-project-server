@@ -3,7 +3,7 @@ API #1 List all users
 ----------------------------------------
 Permission: admin
 Method: GET
-Endpoint: /users
+Endpoint: /admin/users
 
 Request:
   Params:

@@ -1,12 +1,18 @@
 const express = require("express")
+const chalk = require("chalk")
+const { initDB } = require("./utils/db")
+const adminRouter = require("./routers/admin")
 
-const app = express()
+async function createServer() {
+  await initDB()
 
-app.get("/sayhello", function (req, res) {
-  res.json({
-    message: "hello"
-  })
-  res.end()
-})
+  const app = express()
 
-app.listen("5000", () => console.log("Server running at localhost:5000"))
+  app.use("/admin", adminRouter)
+
+  app.listen("5000", () =>
+    console.log(chalk.blue("Server running at localhost:5000"))
+  )
+}
+
+createServer()

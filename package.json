@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Sumaiya4949/datenbank-project-server#readme",
   "dependencies": {
+    "chalk": "^4.1.1",
     "express": "^4.17.1",
     "pg-promise": "^10.10.2"
   }
