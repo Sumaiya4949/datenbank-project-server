@@ -1,0 +1,60 @@
+----------------------------------------
+API #1 List all users
+----------------------------------------
+Permission: admin
+Method: GET
+Endpoint: /users
+
+Request:
+  Params:
+    (empty)
+
+Response:
+  {
+    users: [
+      {
+        id, forename, surname, username
+      }
+    ]
+  }
+
+----------------------------------------
+API #2 Add new user
+----------------------------------------
+Permission: 
+Method: POST
+Endpoint: /add/user
+
+Request:
+  Body:
+    role
+    username
+    password
+    forename
+    surname
+
+Response:
+  {
+    success: true | false
+    message: string
+    id
+    username
+    forename
+    surname
+  }
+
+----------------------------------------
+API #N List all users
+----------------------------------------
+Permission: 
+Method: 
+Endpoint: /
+
+Request:
+  Params:
+    (empty)
+
+Response:
+  {
+    
+  }
