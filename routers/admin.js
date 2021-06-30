@@ -17,10 +17,24 @@ adminRouter.get("/users", async function (req, res) {
 
 // API #9 List all classes
 adminRouter.get("/classes", async function (req, res) {
-  const dbResult = await getDB().any("SELECT NAME FROM CLASS;")
+  const classes = await getDB().any("SELECT NAME FROM CLASS;")
+
+  const response = []
+
+  for (const classInfo of classes) {
+    const subjects = await getDB().any(`
+      SELECT NAME, ID 
+      FROM SUBJECT JOIN OFFERS ON SUBJECT.ID = OFFERS.SUBJECT_ID
+      WHERE OFFERS.CLASS_NAME = '${classInfo.name}'`)
+
+    response.push({
+      name: classInfo.name,
+      subjects,
+    })
+  }
 
   res.json({
-    classes: dbResult,
+    classes: response,
   })
   res.end()
 })

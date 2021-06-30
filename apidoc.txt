@@ -156,9 +156,32 @@ Response:
   {
     classes: [
       { 
-        name
+        name,
+
+        subjects: [
+          {
+            id
+            name
+          }
+        ]
       }
     ]    
+  }
+
+----------------------------------------
+API #10 Add new class
+----------------------------------------
+Permission: admin
+Method: POST
+Endpoint: /admin/class/add
+
+Request:
+  Params:
+    (empty)
+
+Response:
+  {
+    
   }
 
 
