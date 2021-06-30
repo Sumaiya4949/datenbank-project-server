@@ -142,7 +142,7 @@ Response:
   }
 
 ----------------------------------------
-API #9 List all classes
+API #9 List all classes with pupils and subjects
 ----------------------------------------
 Permission: admin
 Method: GET
@@ -157,13 +157,20 @@ Response:
     classes: [
       { 
         name,
-
         subjects: [
           {
             id
             name
           }
-        ]
+        ],
+        pupils: [
+          {
+            id
+            username
+            surname
+            forename
+          }
+        ],
       }
     ]    
   }

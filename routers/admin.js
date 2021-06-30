@@ -15,7 +15,7 @@ adminRouter.get("/users", async function (req, res) {
   res.end()
 })
 
-// API #9 List all classes
+// API #9 List all classes with pupils and subjects
 adminRouter.get("/classes", async function (req, res) {
   const classes = await getDB().any("SELECT NAME FROM CLASS;")
 
@@ -25,11 +25,19 @@ adminRouter.get("/classes", async function (req, res) {
     const subjects = await getDB().any(`
       SELECT NAME, ID 
       FROM SUBJECT JOIN OFFERS ON SUBJECT.ID = OFFERS.SUBJECT_ID
-      WHERE OFFERS.CLASS_NAME = '${classInfo.name}'`)
+      WHERE OFFERS.CLASS_NAME = '${classInfo.name}'
+    `)
+
+    const pupils = await getDB().any(`
+      SELECT ID, USERNAME, FORENAME, SURNAME 
+      FROM PUPIL JOIN ASSIGNS ON PUPIL.ID = ASSIGNS.PUPIL_ID
+      WHERE ASSIGNS.CLASS_NAME = '${classInfo.name}'
+    `)
 
     response.push({
       name: classInfo.name,
       subjects,
+      pupils,
     })
   }
 
