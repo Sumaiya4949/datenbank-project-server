@@ -25,13 +25,13 @@ adminRouter.get("/classes", async function (req, res) {
     const subjects = await getDB().any(`
       SELECT NAME, ID 
       FROM SUBJECT JOIN OFFERS ON SUBJECT.ID = OFFERS.SUBJECT_ID
-      WHERE OFFERS.CLASS_NAME = '${classInfo.name}'
+      WHERE OFFERS.CLASS_NAME = '${classInfo.name}';
     `)
 
     const pupils = await getDB().any(`
       SELECT ID, USERNAME, FORENAME, SURNAME 
       FROM PUPIL JOIN ASSIGNS ON PUPIL.ID = ASSIGNS.PUPIL_ID
-      WHERE ASSIGNS.CLASS_NAME = '${classInfo.name}'
+      WHERE ASSIGNS.CLASS_NAME = '${classInfo.name}';
     `)
 
     response.push({

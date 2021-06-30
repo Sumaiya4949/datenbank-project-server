@@ -19,64 +19,7 @@ Response:
   }
 
 ----------------------------------------
-API #2 Add new user
-----------------------------------------
-Permission: admin
-Method: POST
-Endpoint: /add/user
-
-Request:
-  Body:
-    role
-    username
-    password
-    forename
-    surname
-
-Response:
-  {
-    success: true | false
-    message: string
-    id
-    username
-    forename
-    surname
-  }
-
-----------------------------------------
-API #3 Change user attributes
-----------------------------------------
-Permission: admin
-Method: POST
-Endpoint: /
-
-Request:
-  Params:
-    (empty)
-
-Response:
-  {
-    
-  }
-
-----------------------------------------
-API #4 Remove a user
-----------------------------------------
-Permission: admin
-Method: DELETE
-Endpoint: /
-
-Request:
-  Params:
-    (empty)
-
-Response:
-  {
-    
-  }
-
-----------------------------------------
-API #5 Teacher's own info 
+API #2 Teacher's own info 
 ----------------------------------------
 Permission: admin, teacher
 Method: GET
@@ -95,7 +38,7 @@ Response:
   }
 
 ----------------------------------------
-API #6 Pupil's own info 
+API #3 Pupil's own info 
 ----------------------------------------
 Permission: admin, pupil
 Method: GET
@@ -114,35 +57,7 @@ Response:
   }
 
 ----------------------------------------
-API #7 Modify Teacher's own info 
-----------------------------------------
-Permission: admin, teacher
-Method: POST
-Endpoint: /teacher/info
-
-Request:
-  Params:
-
-Response:
-  {
-  }
-
-----------------------------------------
-API #8 Modify Pupil's own info 
-----------------------------------------
-Permission: admin, pupil
-Method: POST
-Endpoint: /pupil/info
-
-Request:
-  Params:
-
-Response:
-  {
-  }
-
-----------------------------------------
-API #9 List all classes with pupils and subjects
+API #4 List all classes with pupils and subjects
 ----------------------------------------
 Permission: admin
 Method: GET
@@ -175,21 +90,6 @@ Response:
     ]    
   }
 
-----------------------------------------
-API #10 Add new class
-----------------------------------------
-Permission: admin
-Method: POST
-Endpoint: /admin/class/add
-
-Request:
-  Params:
-    (empty)
-
-Response:
-  {
-    
-  }
 
 
 ----------------------------------------
