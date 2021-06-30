@@ -1,5 +1,5 @@
 ----------------------------------------
-API #1 List all users
+API #1 List all users: DONE + NO AUTH
 ----------------------------------------
 Permission: admin
 Method: GET
@@ -21,7 +21,7 @@ Response:
 ----------------------------------------
 API #2 Add new user
 ----------------------------------------
-Permission: 
+Permission: admin
 Method: POST
 Endpoint: /add/user
 
@@ -44,7 +44,126 @@ Response:
   }
 
 ----------------------------------------
-API #N List all users
+API #3 Change user attributes
+----------------------------------------
+Permission: admin
+Method: POST
+Endpoint: /
+
+Request:
+  Params:
+    (empty)
+
+Response:
+  {
+    
+  }
+
+----------------------------------------
+API #4 Remove a user
+----------------------------------------
+Permission: admin
+Method: DELETE
+Endpoint: /
+
+Request:
+  Params:
+    (empty)
+
+Response:
+  {
+    
+  }
+
+----------------------------------------
+API #5 Teacher's own info 
+----------------------------------------
+Permission: admin, teacher
+Method: GET
+Endpoint: /teacher/info
+
+Request:
+  Params:
+    id
+
+Response:
+  {
+    id,
+    username,
+    forename,
+    surname    
+  }
+
+----------------------------------------
+API #6 Pupil's own info 
+----------------------------------------
+Permission: admin, pupil
+Method: GET
+Endpoint: /pupil/info
+
+Request:
+  Params:
+    id
+
+Response:
+  {
+    id,
+    username,
+    forename,
+    surname    
+  }
+
+----------------------------------------
+API #7 Modify Teacher's own info 
+----------------------------------------
+Permission: admin, teacher
+Method: POST
+Endpoint: /teacher/info
+
+Request:
+  Params:
+
+Response:
+  {
+  }
+
+----------------------------------------
+API #8 Modify Pupil's own info 
+----------------------------------------
+Permission: admin, pupil
+Method: POST
+Endpoint: /pupil/info
+
+Request:
+  Params:
+
+Response:
+  {
+  }
+
+----------------------------------------
+API #9 List all classes
+----------------------------------------
+Permission: admin
+Method: GET
+Endpoint: /admin/classes
+
+Request:
+  Params:
+    (empty)
+
+Response:
+  {
+    classes: [
+      { 
+        name
+      }
+    ]    
+  }
+
+
+----------------------------------------
+API #N Summary of api
 ----------------------------------------
 Permission: 
 Method: 
