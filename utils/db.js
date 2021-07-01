@@ -23,3 +23,7 @@ module.exports.initDB = async function () {
 module.exports.getDB = function () {
   return db
 }
+
+module.exports.dbRead = function (queryString) {
+  return db.any(queryString)
+}

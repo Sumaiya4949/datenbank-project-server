@@ -25,14 +25,14 @@ type Pupil {
 
 type Class {
   name: String!
-  offers: [Subject]!
+  subjects: [Subject]!
   pupils: [Pupil]!
 }
 
 type Subject {
   id: ID!
   name: String!
-  has: [Test]!
+  tests: [Test]!
 }
 
 type Test {
@@ -45,9 +45,12 @@ type Test {
 type Query {
   hello: String
 
+  # Admin's queries
   admins: [Admin!]!
 
   teachers: [Teacher!]!
 
   pupils: [Pupil!]!
+
+  classes: [Class!]!
 }
