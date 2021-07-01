@@ -1,0 +1,52 @@
+type Admin {
+  id: ID!
+  username: String!
+  forename: String!
+  surname: String!
+}
+
+type Teacher {
+  id: ID!
+  username: String!
+  forename: String!
+  surname: String!
+
+  teaches: [Subject]!
+}
+
+type Pupil {
+  id: ID!
+  username: String!
+  forename: String!
+  surname: String!
+
+  appearsIn: [Test]!
+}
+
+type Class {
+  name: String!
+  offers: [Subject]!
+  pupils: [Pupil]!
+}
+
+type Subject {
+  id: ID!
+  name: String!
+  has: [Test]!
+}
+
+type Test {
+  id: ID!
+  name: String!
+  date: String!
+}
+
+type Query {
+  hello: String
+
+  admins: [Admin!]!
+
+  teachers: [Teacher!]!
+
+  pupils: [Pupil!]!
+}
