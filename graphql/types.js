@@ -20,6 +20,26 @@ class Teacher {
   }
 }
 
+class Test {
+  constructor(test) {
+    Object.assign(this, test)
+  }
+
+  async subjectName() {
+    const idRows = await getDB().any(
+      `SELECT SUBJECT_ID AS ID FROM HAS_TEST WHERE TEST_ID='${this.id}'`
+    )
+
+    const subjectId = idRows[0].id
+
+    const nameRows = await getDB().any(
+      `SELECT NAME FROM SUBJECT WHERE ID='${subjectId}'`
+    )
+
+    return nameRows[0].name
+  }
+}
+
 class Pupil {
   constructor(pupil) {
     Object.assign(this, pupil)
@@ -37,11 +57,12 @@ class Pupil {
       `SELECT * FROM TEST WHERE ID IN (${testIds.join(", ")})`
     )
 
-    return tests
+    return tests.map((test) => new Test(test))
   }
 }
 
 module.exports = {
   Pupil,
   Teacher,
+  Test,
 }

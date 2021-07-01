@@ -39,6 +39,7 @@ type Test {
   id: ID!
   name: String!
   date: String!
+  subjectName: String!
 }
 
 type Query {
