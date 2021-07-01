@@ -20,7 +20,7 @@ type Pupil {
   forename: String!
   surname: String!
 
-  appearsIn: [Test]!
+  appearsIn: [TestResult]!
 }
 
 type Class {
@@ -42,15 +42,26 @@ type Test {
   subjectName: String!
 }
 
+type TestResult {
+  id: ID!
+  name: String!
+  date: String!
+  subjectName: String!
+  score: Float!
+}
+
 type Query {
   hello: String
 
-  # Admin's queries
+  # Permission: Admin
   admins: [Admin!]!
 
+  # Permission: Admin
   teachers: [Teacher!]!
 
+  # Permission: Admin, Teacher
   pupils: [Pupil!]!
 
+  # Permission: Admin
   classes: [Class!]!
 }

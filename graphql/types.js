@@ -40,6 +40,20 @@ class Test {
   }
 }
 
+class TestResult extends Test {
+  constructor(test, pupilId) {
+    super(test)
+    this.pupilId = pupilId
+  }
+
+  async score() {
+    const scoreRow = await dbRead(
+      `SELECT SCORE FROM APPEARS_IN WHERE PUPIL_ID='${this.pupilId}' AND TEST_ID='${this.id}'`
+    )
+    return scoreRow[0].score
+  }
+}
+
 class Pupil {
   constructor(pupil) {
     Object.assign(this, pupil)
@@ -57,7 +71,7 @@ class Pupil {
       `SELECT * FROM TEST WHERE ID IN (${testIds.join(", ")})`
     )
 
-    return tests.map((test) => new Test(test))
+    return tests.map((test) => new TestResult(test, this.id))
   }
 }
 
