@@ -1,4 +1,6 @@
-export class Teacher {
+const { getDB } = require("../utils/db")
+
+class Teacher {
   constructor(teacher) {
     Object.assign(this, teacher)
   }
@@ -18,10 +20,28 @@ export class Teacher {
   }
 }
 
-export class Pupil {
+class Pupil {
   constructor(pupil) {
     Object.assign(this, pupil)
   }
 
-  async appearsIn() {}
+  async appearsIn() {
+    const testIdRows = await getDB().any(
+      `SELECT TEST_ID AS ID FROM APPEARS_IN WHERE PUPIL_ID='${this.id}'`
+    )
+    const testIds = testIdRows.map((row) => `'${row.id}'`)
+
+    if (testIds.length === 0) return []
+
+    const tests = await getDB().any(
+      `SELECT * FROM TEST WHERE ID IN (${testIds.join(", ")})`
+    )
+
+    return tests
+  }
+}
+
+module.exports = {
+  Pupil,
+  Teacher,
 }

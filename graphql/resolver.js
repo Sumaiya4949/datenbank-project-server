@@ -1,5 +1,5 @@
 const { getDB } = require("../utils/db")
-const { Teacher } = require("./types")
+const { Teacher, Pupil } = require("./types")
 
 module.exports = {
   hello: () => "Hello",
@@ -16,6 +16,6 @@ module.exports = {
 
   pupils: async () => {
     const rows = await getDB().any("SELECT * FROM PUPIL;")
-    return rows
+    return rows.map((row) => new Pupil(row))
   },
 }
