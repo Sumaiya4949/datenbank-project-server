@@ -5,6 +5,7 @@ const { graphqlHTTP } = require("express-graphql")
 const { buildSchema } = require("graphql")
 const fs = require("fs")
 const rootResolver = require("./graphql/resolver")
+const authRouter = require("./routers/auth")
 
 async function createServer() {
   await initDB()
@@ -15,6 +16,8 @@ async function createServer() {
   )
 
   const app = express()
+
+  app.use("/auth", authRouter)
 
   app.use(
     "/graphql",
