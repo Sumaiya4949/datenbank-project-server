@@ -28,9 +28,11 @@ async function createServer() {
     })
   )
 
-  app.listen("5000", () =>
-    console.log(chalk.blue("Server running at localhost:5000"))
-  )
+  app.listen("5000", () => {
+    console.log(chalk.green("Success! Server running at localhost:5000"))
+    console.log(chalk.blue("GraphQL APIs running at localhost:5000/graphql"))
+    console.log(chalk.blue("Auth APIs running at localhost:5000/auth"))
+  })
 }
 
 createServer()
