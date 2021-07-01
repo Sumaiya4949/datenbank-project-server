@@ -38,6 +38,14 @@ class Test {
 
     return nameRows[0].name
   }
+
+  async subjectId() {
+    const idRows = await dbRead(
+      `SELECT SUBJECT_ID AS ID FROM HAS_TEST WHERE TEST_ID='${this.id}'`
+    )
+
+    return idRows[0].id
+  }
 }
 
 class TestResult extends Test {

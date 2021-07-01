@@ -46,6 +46,7 @@ type TestResult {
   id: ID!
   name: String!
   date: String!
+  subjectId: ID!
   subjectName: String!
   score: Float!
 }
@@ -64,4 +65,7 @@ type Query {
 
   # Permission: Admin
   classes: [Class!]!
+
+  # Permission: Pupil
+  pupil(id: ID!): Pupil
 }
