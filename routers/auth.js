@@ -24,8 +24,7 @@ authRouter.get("/me", async function (req, res) {
 
 authRouter.post("/logout", async function (req, res) {
   try {
-    req.session.destroy()
-    res.end()
+    req.session.destroy(() => res.end())
   } catch {
     res.statusCode = 400
     res.end("You are not logged in")
