@@ -20,10 +20,7 @@ module.exports.initDB = async function () {
   }
 }
 
-module.exports.getDB = function () {
-  return db
-}
-
-module.exports.dbRead = function (queryString) {
-  return db.any(queryString)
+// To execute an SQL query in database
+module.exports.dbq = function (sqlQueryString) {
+  return db.any(sqlQueryString)
 }

@@ -1,4 +1,4 @@
-const { getDB, dbRead } = require("../utils/db")
+const { dbq } = require("../utils/db")
 
 class Teacher {
   constructor(teacher) {
@@ -6,14 +6,14 @@ class Teacher {
   }
 
   async teaches() {
-    const subjectIdRows = await dbRead(
+    const subjectIdRows = await dbq(
       `SELECT SUBJECT_ID AS ID FROM TEACHES WHERE TEACHER_ID='${this.id}'`
     )
     const subjectIds = subjectIdRows.map((row) => `'${row.id}'`)
 
     if (subjectIds.length === 0) return []
 
-    const subjects = await dbRead(
+    const subjects = await dbq(
       `SELECT * FROM SUBJECT WHERE ID IN (${subjectIds.join(", ")})`
     )
     return subjects
@@ -26,13 +26,13 @@ class Test {
   }
 
   async subjectName() {
-    const idRows = await dbRead(
+    const idRows = await dbq(
       `SELECT SUBJECT_ID AS ID FROM HAS_TEST WHERE TEST_ID='${this.id}'`
     )
 
     const subjectId = idRows[0].id
 
-    const nameRows = await dbRead(
+    const nameRows = await dbq(
       `SELECT NAME FROM SUBJECT WHERE ID='${subjectId}'`
     )
 
@@ -40,7 +40,7 @@ class Test {
   }
 
   async subjectId() {
-    const idRows = await dbRead(
+    const idRows = await dbq(
       `SELECT SUBJECT_ID AS ID FROM HAS_TEST WHERE TEST_ID='${this.id}'`
     )
 
@@ -55,7 +55,7 @@ class TestResult extends Test {
   }
 
   async score() {
-    const scoreRow = await dbRead(
+    const scoreRow = await dbq(
       `SELECT SCORE FROM APPEARS_IN WHERE PUPIL_ID='${this.pupilId}' AND TEST_ID='${this.id}'`
     )
     return scoreRow[0].score
@@ -68,14 +68,14 @@ class Pupil {
   }
 
   async appearsIn() {
-    const testIdRows = await dbRead(
+    const testIdRows = await dbq(
       `SELECT TEST_ID AS ID FROM APPEARS_IN WHERE PUPIL_ID='${this.id}'`
     )
     const testIds = testIdRows.map((row) => `'${row.id}'`)
 
     if (testIds.length === 0) return []
 
-    const tests = await dbRead(
+    const tests = await dbq(
       `SELECT * FROM TEST WHERE ID IN (${testIds.join(", ")})`
     )
 
@@ -89,7 +89,7 @@ class Subject {
   }
 
   async tests() {
-    const testIdRows = await dbRead(
+    const testIdRows = await dbq(
       `SELECT TEST_ID AS ID FROM HAS_TEST WHERE SUBJECT_ID='${this.id}'`
     )
 
@@ -97,7 +97,7 @@ class Subject {
 
     if (testIds.length === 0) return []
 
-    const testRows = await dbRead(
+    const testRows = await dbq(
       `SELECT * FROM TEST WHERE ID IN (${testIds.join(", ")})`
     )
 
@@ -111,13 +111,13 @@ class Class {
   }
 
   async subjects() {
-    const subjectIdRows = await dbRead(
+    const subjectIdRows = await dbq(
       `SELECT SUBJECT_ID AS ID FROM OFFERS WHERE CLASS_NAME='${this.name}'`
     )
 
     const subjectIds = subjectIdRows.map((row) => `'${row.id}'`)
 
-    const subjectRows = await dbRead(
+    const subjectRows = await dbq(
       `SELECT * FROM SUBJECT WHERE ID IN (${subjectIds.join(", ")})`
     )
 
@@ -125,13 +125,13 @@ class Class {
   }
 
   async pupils() {
-    const pupilIdRows = await dbRead(
+    const pupilIdRows = await dbq(
       `SELECT PUPIL_ID AS ID FROM ASSIGNS WHERE CLASS_NAME='${this.name}'`
     )
 
     const pupilIds = pupilIdRows.map((row) => `'${row.id}'`)
 
-    const pupilRows = await dbRead(
+    const pupilRows = await dbq(
       `SELECT * FROM PUPIL WHERE ID IN (${pupilIds.join(", ")})`
     )
 

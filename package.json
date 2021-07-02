@@ -20,9 +20,12 @@
   "homepage": "https://github.com/Sumaiya4949/datenbank-project-server#readme",
   "dependencies": {
     "chalk": "^4.1.1",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-graphql": "^0.12.0",
+    "express-session": "^1.17.2",
     "graphql": "^15.5.1",
-    "pg-promise": "^10.10.2"
+    "pg-promise": "^10.10.2",
+    "sha3": "^2.1.4"
   }
 }
