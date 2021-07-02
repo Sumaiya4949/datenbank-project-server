@@ -48,13 +48,9 @@ class Test {
   }
 
   async score(args) {
-    console.log(
-      `SELECT SCORE FROM APPEARS_IN WHERE PUPIL_ID='${args.pupilId}' AND TEST_ID='${this.id}'`
-    )
     const scoreRows = await dbq(
       `SELECT SCORE FROM APPEARS_IN WHERE PUPIL_ID='${args.pupilId}' AND TEST_ID='${this.id}'`
     )
-    console.log(scoreRows)
     if (scoreRows.length === 0) return null
     return scoreRows[0].score
   }
