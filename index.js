@@ -18,14 +18,18 @@ async function createServer() {
 
   const app = express()
 
-  app.use(cors())
+  app.set("trust proxy", 1)
+
+  // app.use(cors())
 
   app.use(
     session({
-      secret: "1567",
-      cookie: { secure: true },
+      name: "sid",
+      cookie: { secure: process.env === "production" },
+      sameSite: "none",
       resave: true,
       saveUninitialized: false,
+      secret: "1567",
     })
   )
 

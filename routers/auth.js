@@ -4,6 +4,12 @@ const { getPasswordHash } = require("../utils/helpers")
 
 const authRouter = express.Router()
 
+authRouter.get("/me", async function (req, res) {
+  // console.log(req.headers)
+  res.json("hi me")
+  res.end()
+})
+
 authRouter.post("/login", async function (req, res) {
   const passwordHash = getPasswordHash(req.body.password)
 
@@ -22,6 +28,9 @@ authRouter.post("/login", async function (req, res) {
 
     const loggedInUser = rows[0]
     const { id, surname, forename, username } = loggedInUser
+
+    req.session.isLoggedIn = true
+    req.session.loggedInUserId = id
 
     res.json({
       id,
