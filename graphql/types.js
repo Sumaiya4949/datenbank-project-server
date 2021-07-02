@@ -81,6 +81,33 @@ class Pupil {
 
     return tests.map((test) => new TestResult(test, this.id))
   }
+
+  async className() {
+    const rows = await dbq(
+      `SELECT CLASS_NAME FROM ASSIGNS WHERE PUPIL_ID='${this.id}'`
+    )
+
+    if (rows.length === 0) return null
+    return rows[0].class_name
+  }
+
+  async subjects() {
+    const className = await this.className()
+
+    const subjectIdRows = await dbq(
+      `SELECT SUBJECT_ID AS ID FROM OFFERS WHERE CLASS_NAME='${className}'`
+    )
+
+    if (subjectIdRows.length === 0) return []
+
+    const subjectIds = subjectIdRows.map((row) => `'${row.id}'`)
+
+    const subjects = await dbq(
+      `SELECT * FROM SUBJECT WHERE ID IN (${subjectIds.join(", ")})`
+    )
+
+    return subjects.map((subject) => new Subject(subject))
+  }
 }
 
 class Subject {

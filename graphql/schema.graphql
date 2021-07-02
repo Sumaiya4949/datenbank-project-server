@@ -21,6 +21,8 @@ type Pupil {
   surname: String!
 
   appearsIn: [TestResult]!
+  className: String
+  subjects: [Subject!]!
 }
 
 type Class {
