@@ -22,7 +22,7 @@ type Pupil {
 
   appearsIn: [TestResult]!
   className: String
-  subjects: [Subject!]!
+  subjects(id: ID): [Subject!]!
 }
 
 type Class {
@@ -42,6 +42,7 @@ type Test {
   name: String!
   date: String!
   subjectName: String!
+  score(pupilId: ID!): Float
 }
 
 type TestResult {

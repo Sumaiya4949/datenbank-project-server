@@ -46,6 +46,18 @@ class Test {
 
     return idRows[0].id
   }
+
+  async score(args) {
+    console.log(
+      `SELECT SCORE FROM APPEARS_IN WHERE PUPIL_ID='${args.pupilId}' AND TEST_ID='${this.id}'`
+    )
+    const scoreRows = await dbq(
+      `SELECT SCORE FROM APPEARS_IN WHERE PUPIL_ID='${args.pupilId}' AND TEST_ID='${this.id}'`
+    )
+    console.log(scoreRows)
+    if (scoreRows.length === 0) return null
+    return scoreRows[0].score
+  }
 }
 
 class TestResult extends Test {
@@ -91,12 +103,14 @@ class Pupil {
     return rows[0].class_name
   }
 
-  async subjects() {
+  async subjects(args) {
     const className = await this.className()
 
-    const subjectIdRows = await dbq(
-      `SELECT SUBJECT_ID AS ID FROM OFFERS WHERE CLASS_NAME='${className}'`
-    )
+    const subjectIdRows = args.id
+      ? [{ id: args.id }]
+      : await dbq(
+          `SELECT SUBJECT_ID AS ID FROM OFFERS WHERE CLASS_NAME='${className}'`
+        )
 
     if (subjectIdRows.length === 0) return []
 
@@ -128,7 +142,7 @@ class Subject {
       `SELECT * FROM TEST WHERE ID IN (${testIds.join(", ")})`
     )
 
-    return testRows
+    return testRows.map((test) => new Test(test))
   }
 }
 
