@@ -19,8 +19,12 @@ module.exports = {
     return rows.map((row) => new Pupil(row))
   },
 
-  classes: async () => {
-    const rows = await dbq("SELECT * FROM CLASS;")
+  classes: async (args) => {
+    const rows = await dbq(
+      args.name
+        ? `SELECT * FROM CLASS WHERE NAME='${args.name}'`
+        : "SELECT * FROM CLASS;"
+    )
     return rows.map((row) => new Class(row))
   },
 
@@ -32,5 +36,15 @@ module.exports = {
     if (pupilRows.length === 0) return null
 
     return new Pupil(pupilRows[0])
+  },
+
+  teacher: async (args) => {
+    // Verify if its the logged in teacher
+
+    const teacherRows = await dbq(`SELECT * FROM TEACHER WHERE ID='${args.id}'`)
+
+    if (teacherRows.length === 0) return null
+
+    return new Teacher(teacherRows[0])
   },
 }

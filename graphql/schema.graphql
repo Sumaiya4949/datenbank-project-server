@@ -35,6 +35,7 @@ type Subject {
   id: ID!
   name: String!
   tests: [Test]!
+  className: String
 }
 
 type Test {
@@ -67,8 +68,11 @@ type Query {
   pupils: [Pupil!]!
 
   # Permission: Admin
-  classes: [Class!]!
+  classes(name: String): [Class!]!
 
-  # Permission: Pupil
+  # Permission: ALL
   pupil(id: ID!): Pupil
+
+  # Permission: Teacher
+  teacher(id: ID!): Teacher
 }

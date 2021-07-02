@@ -16,7 +16,7 @@ class Teacher {
     const subjects = await dbq(
       `SELECT * FROM SUBJECT WHERE ID IN (${subjectIds.join(", ")})`
     )
-    return subjects
+    return subjects.map((sub) => new Subject(sub))
   }
 }
 
@@ -139,6 +139,18 @@ class Subject {
     )
 
     return testRows.map((test) => new Test(test))
+  }
+
+  async className() {
+    const classNameRows = await dbq(
+      `SELECT CLASS_NAME FROM OFFERS WHERE SUBJECT_ID='${this.id}'`
+    )
+
+    if (classNameRows.length === 0) return null
+
+    const className = `${classNameRows[0].class_name}`
+
+    return className
   }
 }
 
