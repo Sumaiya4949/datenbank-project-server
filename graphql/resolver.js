@@ -1,6 +1,7 @@
 const { dbq } = require("../utils/db")
 const { Teacher, Pupil, Class, Test } = require("./types")
 const { v4: uuid } = require("uuid")
+const { getPasswordHash } = require("../utils/helpers")
 
 module.exports = {
   // Queries
@@ -153,5 +154,41 @@ module.exports = {
     )
 
     return rows[0].score
+  },
+
+  createUser: async (args) => {
+    const { adminId, user } = args
+
+    // TODO: Verify admin by id
+
+    const { role, forename, surname, username, password } = user
+
+    const userId = uuid()
+
+    const passwordHash = getPasswordHash(password)
+
+    const tableName =
+      role === "pupil"
+        ? "PUPIL"
+        : role === "teacher"
+        ? "TEACHER"
+        : role === "admin"
+        ? "ADMIN"
+        : null
+
+    const rows = await dbq(
+      `SELECT ID FROM ${tableName} WHERE USERNAME='${username}'`
+    )
+
+    if (rows.length) return Promise.reject("User already exists")
+
+    try {
+      await dbq(
+        `INSERT INTO ${tableName} VALUES ('${userId}', '${username}', '${passwordHash}', '${forename}', '${surname}')`
+      )
+      return "Created"
+    } catch (err) {
+      return Promise.reject(err.message)
+    }
   },
 }

@@ -101,6 +101,14 @@ input InputTest {
   date: String!
 }
 
+input InputUser {
+  role: String!
+  forename: String!
+  surname: String!
+  username: String!
+  password: String!
+}
+
 type Mutation {
   # Permission: Pupil, Admin
   editPupilInfo(id: ID!, userInfo: InputUserInfo!): Pupil
@@ -117,4 +125,7 @@ type Mutation {
   editTest(id: ID!, subjectId: ID!, teacherId: ID!, test: InputTest!): Test
 
   editScore(teacherId: ID!, pupilId: ID!, testId: ID!, score: Float!): Float!
+
+  # Permission: Admin
+  createUser(adminId: ID!, user: InputUser!): String!
 }
