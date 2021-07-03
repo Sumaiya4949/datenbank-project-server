@@ -110,4 +110,23 @@ module.exports = {
 
     return new Test(rows[0])
   },
+
+  editTest: async (args) => {
+    const { id, teacherId, subjectId, test } = args
+
+    // TODO: verify if its a teacher of this subject
+
+    try {
+      await dbq(
+        `UPDATE TEST SET NAME='${test.name}', DATE='${test.date}' WHERE ID='${id}'`
+      )
+    } catch (err) {
+      // TODO: undo all changes
+      return null
+    }
+
+    const rows = await dbq(`SELECT * FROM TEST WHERE ID='${id}'`)
+
+    return new Test(rows[0])
+  },
 }
