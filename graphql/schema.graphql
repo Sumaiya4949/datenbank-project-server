@@ -84,7 +84,7 @@ type Query {
   teacher(id: ID!): Teacher
 
   # Permission: Teacher
-  test(id: ID!): Test
+  test(id: ID!, teacherId: ID!): Test
 }
 
 ##########################
