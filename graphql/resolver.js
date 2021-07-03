@@ -49,6 +49,15 @@ module.exports = {
     return new Teacher(teacherRows[0])
   },
 
+  test: async (args) => {
+    const { id } = args
+    const rows = await dbq(`SELECT * FROM TEST WHERE ID='${id}'`)
+
+    if (rows.length === 0) return null
+
+    return new Test(rows[0])
+  },
+
   // Mutations
   editPupilInfo: async (args) => {
     const { id, userInfo } = args

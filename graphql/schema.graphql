@@ -23,6 +23,7 @@ type Pupil {
   appearsIn: [TestResult]!
   className: String
   subjects(id: ID): [Subject!]!
+  score(testId: ID!): Float
 }
 
 type Class {
@@ -45,7 +46,9 @@ type Test {
   name: String!
   date: String!
   subjectName: String!
+
   score(pupilId: ID!): Float
+  pupils: [Pupil!]!
 }
 
 type TestResult {
@@ -79,6 +82,9 @@ type Query {
 
   # Permission: Teacher
   teacher(id: ID!): Teacher
+
+  # Permission: Teacher
+  test(id: ID!): Test
 }
 
 ##########################

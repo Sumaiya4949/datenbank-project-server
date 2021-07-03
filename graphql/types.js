@@ -56,6 +56,22 @@ class Test {
     if (scoreRows.length === 0) return null
     return scoreRows[0].score
   }
+
+  async pupils() {
+    const pupilIdRows = await dbq(
+      `SELECT PUPIL_ID AS ID FROM APPEARS_IN JOIN TEST ON TEST.ID=APPEARS_IN.TEST_ID WHERE TEST_ID='${this.id}'`
+    )
+
+    if (pupilIdRows.length === 0) return []
+
+    const pupilIds = pupilIdRows.map((row) => `'${row.id}'`)
+
+    const pupilRows = await dbq(
+      `SELECT * FROM PUPIL WHERE ID IN (${pupilIds.join(", ")})`
+    )
+
+    return pupilRows.map((pupil) => new Pupil(pupil))
+  }
 }
 
 class TestResult extends Test {
@@ -119,6 +135,16 @@ class Pupil {
     )
 
     return subjects.map((subject) => new Subject(subject))
+  }
+
+  async score(args) {
+    const { testId } = args
+
+    const rows = await dbq(
+      `SELECT SCORE FROM APPEARS_IN WHERE PUPIL_ID='${this.id}' AND TEST_ID='${testId}'`
+    )
+
+    return rows.length ? rows[0].score : null
   }
 }
 
