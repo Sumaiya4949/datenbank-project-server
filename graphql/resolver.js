@@ -61,4 +61,30 @@ module.exports = {
     const pupilRows = await dbq(`SELECT * FROM PUPIL WHERE ID='${id}';`)
     return new Pupil(pupilRows[0])
   },
+
+  editTeacherInfo: async (args) => {
+    const { id, userInfo } = args
+
+    const { forename, surname } = userInfo
+
+    await dbq(
+      `UPDATE TEACHER SET FORENAME='${forename}', SURNAME='${surname}' WHERE ID='${id}';`
+    )
+
+    const teacherRows = await dbq(`SELECT * FROM TEACHER WHERE ID='${id}';`)
+    return new Teacher(teacherRows[0])
+  },
+
+  editAdminInfo: async (args) => {
+    const { id, userInfo } = args
+
+    const { forename, surname } = userInfo
+
+    await dbq(
+      `UPDATE ADMIN SET FORENAME='${forename}', SURNAME='${surname}' WHERE ID='${id}';`
+    )
+
+    const teacherRows = await dbq(`SELECT * FROM ADMIN WHERE ID='${id}';`)
+    return teacherRows[0]
+  },
 }
