@@ -35,6 +35,8 @@ type Subject {
   id: ID!
   name: String!
   tests: [Test]!
+
+  pupils: [Pupil!]!
   className: String
 }
 

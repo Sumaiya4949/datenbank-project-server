@@ -154,6 +154,22 @@ class Subject {
 
     return className
   }
+
+  async pupils() {
+    const pupilIdRows = await dbq(
+      `SELECT PUPIL_ID AS ID FROM HAS_TEST NATURAL JOIN APPEARS_IN WHERE SUBJECT_ID='${this.id}'`
+    )
+
+    if (pupilIdRows.length === 0) return []
+
+    const pupilIds = pupilIdRows.map((row) => `'${row.id}'`)
+
+    const pupils = await dbq(
+      `SELECT * FROM PUPIL WHERE ID IN (${pupilIds.join(", ")})`
+    )
+
+    return pupils.map((pupil) => new Pupil(pupil))
+  }
 }
 
 class Class {
