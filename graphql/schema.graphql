@@ -90,6 +90,11 @@ input InputUserInfo {
   surname: String
 }
 
+input InputTest {
+  name: String!
+  date: String!
+}
+
 type Mutation {
   # Permission: Pupil, Admin
   editPupilInfo(id: ID!, userInfo: InputUserInfo!): Pupil
@@ -99,4 +104,7 @@ type Mutation {
 
   # Permission: Admin
   editAdminInfo(id: ID!, userInfo: InputUserInfo!): Teacher
+
+  # Permission: Teacher
+  createTest(subjectId: ID!, teacherId: ID!, test: InputTest!): Test
 }

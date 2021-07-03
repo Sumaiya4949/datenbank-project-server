@@ -1,5 +1,6 @@
 const { dbq } = require("../utils/db")
-const { Teacher, Pupil, Class } = require("./types")
+const { Teacher, Pupil, Class, Test } = require("./types")
+const { v4: uuid } = require("uuid")
 
 module.exports = {
   // Queries
@@ -86,5 +87,27 @@ module.exports = {
 
     const teacherRows = await dbq(`SELECT * FROM ADMIN WHERE ID='${id}';`)
     return teacherRows[0]
+  },
+
+  createTest: async (args) => {
+    const { teacherId, subjectId, test } = args
+
+    // TODO: verify if its a teacher of this subject
+
+    const testId = uuid()
+
+    try {
+      await dbq(
+        `INSERT INTO TEST VALUES('${testId}', '${test.name}', '${test.date}')`
+      )
+      await dbq(`INSERT INTO HAS_TEST VALUES('${subjectId}', '${testId}')`)
+    } catch {
+      // TODO: undo all changes
+      return null
+    }
+
+    const rows = await dbq(`SELECT * FROM TEST WHERE ID='${testId}'`)
+
+    return new Test(rows[0])
   },
 }
