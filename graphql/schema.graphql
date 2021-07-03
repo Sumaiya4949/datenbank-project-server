@@ -11,7 +11,7 @@ type Teacher {
   forename: String!
   surname: String!
 
-  teaches: [Subject]!
+  teaches(id: ID): [Subject]!
 }
 
 type Pupil {

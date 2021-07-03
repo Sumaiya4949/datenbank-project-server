@@ -5,9 +5,11 @@ class Teacher {
     Object.assign(this, teacher)
   }
 
-  async teaches() {
+  async teaches(args) {
     const subjectIdRows = await dbq(
-      `SELECT SUBJECT_ID AS ID FROM TEACHES WHERE TEACHER_ID='${this.id}'`
+      args.id
+        ? `SELECT SUBJECT_ID AS ID FROM TEACHES WHERE TEACHER_ID='${this.id}' AND SUBJECT_ID='${args.id}'`
+        : `SELECT SUBJECT_ID AS ID FROM TEACHES WHERE TEACHER_ID='${this.id}'`
     )
     const subjectIds = subjectIdRows.map((row) => `'${row.id}'`)
 
