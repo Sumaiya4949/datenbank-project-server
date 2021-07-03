@@ -138,4 +138,20 @@ module.exports = {
 
     return new Test(rows[0])
   },
+
+  editScore: async (args) => {
+    const { teacherId, pupilId, testId, score } = args
+
+    // TODO: authenticate
+
+    await dbq(
+      `UPDATE APPEARS_IN SET SCORE='${score}' WHERE TEST_ID='${testId}' AND PUPIL_ID='${pupilId}'`
+    )
+
+    const rows = await dbq(
+      `SELECT SCORE FROM APPEARS_IN WHERE TEST_ID='${testId}' AND PUPIL_ID='${pupilId}'`
+    )
+
+    return rows[0].score
+  },
 }

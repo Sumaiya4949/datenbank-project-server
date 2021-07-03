@@ -113,5 +113,8 @@ type Mutation {
 
   # Permission: Teacher
   createTest(subjectId: ID!, teacherId: ID!, test: InputTest!): Test
+
   editTest(id: ID!, subjectId: ID!, teacherId: ID!, test: InputTest!): Test
+
+  editScore(teacherId: ID!, pupilId: ID!, testId: ID!, score: Float!): Float!
 }
