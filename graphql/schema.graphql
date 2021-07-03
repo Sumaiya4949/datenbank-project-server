@@ -57,9 +57,11 @@ type TestResult {
   score: Float!
 }
 
-type Query {
-  hello: String
+##########################
+# Queries
+##########################
 
+type Query {
   # Permission: Admin
   admins: [Admin!]!
 
@@ -77,4 +79,24 @@ type Query {
 
   # Permission: Teacher
   teacher(id: ID!): Teacher
+}
+
+##########################
+# Mutations
+##########################
+
+input InputUserInfo {
+  forename: String
+  surname: String
+}
+
+type Mutation {
+  # Permission: Pupil, Admin
+  editPupilInfo(id: ID!, userInfo: InputUserInfo!): Pupil
+
+  # Permission: Teacher, Admin
+  editTeacherInfo(id: ID!, userInfo: InputUserInfo!): Teacher
+
+  # Permission: Admin
+  editAdminInfo(id: ID!, userInfo: InputUserInfo!): Teacher
 }

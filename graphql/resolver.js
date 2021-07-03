@@ -2,7 +2,7 @@ const { dbq } = require("../utils/db")
 const { Teacher, Pupil, Class } = require("./types")
 
 module.exports = {
-  hello: () => "Hello",
+  // Queries
 
   admins: async () => {
     const rows = await dbq("SELECT * FROM ADMIN;")
@@ -46,5 +46,19 @@ module.exports = {
     if (teacherRows.length === 0) return null
 
     return new Teacher(teacherRows[0])
+  },
+
+  // Mutations
+  editPupilInfo: async (args) => {
+    const { id, userInfo } = args
+
+    const { forename, surname } = userInfo
+
+    await dbq(
+      `UPDATE PUPIL SET FORENAME='${forename}', SURNAME='${surname}' WHERE ID='${id}';`
+    )
+
+    const pupilRows = await dbq(`SELECT * FROM PUPIL WHERE ID='${id}';`)
+    return new Pupil(pupilRows[0])
   },
 }
