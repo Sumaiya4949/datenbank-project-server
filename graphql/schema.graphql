@@ -130,4 +130,11 @@ type Mutation {
   createUser(adminId: ID!, user: InputUser!): String!
 
   createClass(adminId: ID!, class: String!): String!
+
+  createSubject(
+    adminId: ID!
+    class: String!
+    teacherId: ID!
+    name: String!
+  ): Subject
 }

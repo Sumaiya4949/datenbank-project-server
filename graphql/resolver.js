@@ -1,5 +1,5 @@
 const { dbq } = require("../utils/db")
-const { Teacher, Pupil, Class, Test } = require("./types")
+const { Teacher, Pupil, Class, Test, Subject } = require("./types")
 const { v4: uuid } = require("uuid")
 const { getPasswordHash } = require("../utils/helpers")
 
@@ -207,5 +207,21 @@ module.exports = {
     } catch (err) {
       return Promise.reject(err.message)
     }
+  },
+
+  createSubject: async (args) => {
+    const { adminId, teacherId, name, class: className } = args
+
+    // TODO: Verify admin, teacher, class
+
+    const id = uuid()
+
+    await dbq(`INSERT INTO SUBJECT VALUES('${id}', '${name}')`)
+    await dbq(`INSERT INTO OFFERS VALUES('${className}', '${id}')`)
+    await dbq(`INSERT INTO TEACHES VALUES('${teacherId}', '${id}')`)
+
+    const rows = await dbq(`SELECT * FROM SUBJECT WHERE ID='${id}'`)
+
+    return rows.length ? new Subject(rows[0]) : null
   },
 }
