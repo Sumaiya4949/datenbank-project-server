@@ -404,4 +404,55 @@ module.exports = {
 
     return true
   },
+
+  deletePupil: async (args) => {
+    const { adminId, id } = args
+
+    // TODO: Verify admin
+
+    await dbq(`DELETE FROM APPEARS_IN WHERE PUPIL_ID='${id}'`)
+
+    await dbq(`DELETE FROM ASSIGNS WHERE PUPIL_ID='${id}'`)
+
+    await dbq(`DELETE FROM PUPIL WHERE ID='${id}'`)
+
+    return {
+      success: true,
+    }
+  },
+
+  deleteTeacher: async (args) => {
+    const { adminId, id } = args
+
+    // TODO: Verify admin
+
+    const mySubjectIdRows = await dbq(`
+      SELECT SUBJECT.ID AS ID
+      FROM TEACHES JOIN SUBJECT
+        ON TEACHES.SUBJECT_ID = SUBJECT.ID
+      WHERE TEACHES.TEACHER_ID = '${id}';
+    `)
+
+    if (mySubjectIdRows.length) {
+      const mySubjectIds = mySubjectIdRows.map((row) => `'${row.id}'`)
+
+      const rows = await dbq(
+        `SELECT ID 
+        FROM ARCHIVED_SUBJECT 
+        WHERE ID IN (${mySubjectIds.join(",")})`
+      )
+
+      if (rows.length < mySubjectIds.length)
+        return {
+          success: false,
+          message: "Teachers with unarchived subjects cannot be removed",
+        }
+    }
+
+    await dbq(`DELETE FROM TEACHER WHERE ID='${id}'`)
+
+    return {
+      success: true,
+    }
+  },
 }

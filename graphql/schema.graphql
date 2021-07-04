@@ -166,4 +166,9 @@ type Mutation {
 
   # Permission: Teacher
   deleteTest(teacherId: ID!, testId: ID!): Boolean!
+
+  # Permission: Admin
+  deletePupil(adminId: ID!, id: ID!): Response!
+
+  deleteTeacher(adminId: ID!, id: ID!): Response!
 }
