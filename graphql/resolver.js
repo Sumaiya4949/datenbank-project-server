@@ -2,7 +2,13 @@ const { dbq } = require("../utils/db")
 const { Teacher, Pupil, Class, Test, Subject } = require("./types")
 const { v4: uuid } = require("uuid")
 const { getPasswordHash } = require("../utils/helpers")
-const { isNotAdmin, isPupilAuthUser } = require("./utils")
+const {
+  isNotAdmin,
+  isPupilAuthUser,
+  isTeacherAuthUser,
+  isAdminAuthUser,
+  isAnyAdmin,
+} = require("./utils")
 
 module.exports = {
   // Queries
@@ -28,7 +34,7 @@ module.exports = {
     return rows.map((row) => new Pupil(row))
   },
 
-  classes: async (args) => {
+  classes: async (args, context) => {
     if (isNotAdmin(context)) return Promise.reject()
 
     const rows = await dbq(
@@ -129,7 +135,9 @@ module.exports = {
   editPupilInfo: async (args, context) => {
     const { id, userInfo } = args
 
-    if (!isPupilAuthUser(context, id)) return Promise.reject("Not allowed")
+    // Allow only logged in pupil
+    if (!isPupilAuthUser(context, id) && isNotAdmin(context))
+      return Promise.reject("Not allowed")
 
     const { forename, surname } = userInfo
 
@@ -141,8 +149,12 @@ module.exports = {
     return new Pupil(pupilRows[0])
   },
 
-  editTeacherInfo: async (args) => {
+  editTeacherInfo: async (args, context) => {
     const { id, userInfo } = args
+
+    // Allow only logged in teacher
+    if (!isTeacherAuthUser(context, id) && isNotAdmin(context))
+      return Promise.reject("Not allowed")
 
     const { forename, surname } = userInfo
 
@@ -154,8 +166,11 @@ module.exports = {
     return new Teacher(teacherRows[0])
   },
 
-  editAdminInfo: async (args) => {
+  editAdminInfo: async (args, context) => {
     const { id, userInfo } = args
+
+    // Allow only logged in admin
+    if (!isAdminAuthUser(context, id)) return Promise.reject("Not allowed")
 
     const { forename, surname } = userInfo
 
@@ -167,8 +182,11 @@ module.exports = {
     return teacherRows[0]
   },
 
-  createTest: async (args) => {
+  createTest: async (args, context) => {
     const { teacherId, subjectId, test } = args
+
+    if (!isTeacherAuthUser(context, teacherId))
+      return Promise.reject("Not allowed")
 
     // TODO: verify if its a teacher of this subject
 
@@ -189,8 +207,11 @@ module.exports = {
     return new Test(rows[0])
   },
 
-  editTest: async (args) => {
+  editTest: async (args, context) => {
     const { id, teacherId, subjectId, test } = args
+
+    if (!isTeacherAuthUser(context, teacherId))
+      return Promise.reject("Not allowed")
 
     // TODO: verify if its a teacher of this subject
 
@@ -208,10 +229,11 @@ module.exports = {
     return new Test(rows[0])
   },
 
-  editScore: async (args) => {
+  editScore: async (args, context) => {
     const { teacherId, pupilId, testId, score } = args
 
-    // TODO: authenticate
+    if (!isTeacherAuthUser(context, teacherId))
+      return Promise.reject("Not allowed")
 
     await dbq(
       `UPDATE APPEARS_IN SET SCORE='${score}' WHERE TEST_ID='${testId}' AND PUPIL_ID='${pupilId}'`
@@ -224,10 +246,10 @@ module.exports = {
     return rows[0].score
   },
 
-  createUser: async (args) => {
+  createUser: async (args, context) => {
     const { adminId, user } = args
 
-    // TODO: Verify admin by id
+    if (!isAdminAuthUser(context, adminId)) return Promise.reject("Not allowed")
 
     const { role, forename, surname, username, password } = user
 
@@ -260,10 +282,10 @@ module.exports = {
     }
   },
 
-  createClass: async (args) => {
+  createClass: async (args, context) => {
     const { adminId, class: className } = args
 
-    // TODO: Verify admin by id
+    if (!isAdminAuthUser(context, adminId)) return Promise.reject("Not allowed")
 
     const rows = await dbq(`SELECT NAME FROM CLASS WHERE NAME='${className}'`)
 
@@ -277,10 +299,10 @@ module.exports = {
     }
   },
 
-  createSubject: async (args) => {
+  createSubject: async (args, context) => {
     const { adminId, teacherId, name, class: className } = args
 
-    // TODO: Verify admin, teacher, class
+    if (!isAdminAuthUser(context, adminId)) return Promise.reject("Not allowed")
 
     const id = uuid()
 
@@ -293,10 +315,10 @@ module.exports = {
     return rows.length ? new Subject(rows[0]) : null
   },
 
-  archiveSubjectByAdmin: async (args) => {
+  archiveSubjectByAdmin: async (args, context) => {
     const { adminId, subjectId } = args
 
-    // TODO: verify admin
+    if (!isAdminAuthUser(context, adminId)) return Promise.reject("Not allowed")
 
     const subjectRows = await dbq(
       `SELECT * FROM SUBJECT WHERE ID='${subjectId}'`
@@ -328,10 +350,10 @@ module.exports = {
     return new Subject(archivedSubjectRows[0])
   },
 
-  deleteSubject: async (args) => {
+  deleteSubject: async (args, context) => {
     const { adminId, subjectId } = args
 
-    // TODO: verify admin
+    if (!isAdminAuthUser(context, adminId)) return Promise.reject("Not allowed")
 
     const archivedSubjectRows = await dbq(
       `SELECT ID FROM ARCHIVED_SUBJECT WHERE ID='${subjectId}'`
@@ -365,8 +387,10 @@ module.exports = {
     }
   },
 
-  assignPupil: async (args) => {
+  assignPupil: async (args, context) => {
     const { adminId, pupilId, class: className } = args
+
+    if (!isAdminAuthUser(context, adminId)) return Promise.reject("Not allowed")
 
     const classRows = await dbq(
       `SELECT * FROM ASSIGNS WHERE PUPIL_ID='${pupilId}'`
@@ -385,10 +409,10 @@ module.exports = {
     return true
   },
 
-  deassignPupil: async (args) => {
+  deassignPupil: async (args, context) => {
     const { adminId, pupilId } = args
 
-    // TODO: VERIFY ADMIN
+    if (!isAdminAuthUser(context, adminId)) return Promise.reject("Not allowed")
 
     await dbq(`DELETE FROM ASSIGNS WHERE PUPIL_ID='${pupilId}'`)
 
@@ -421,10 +445,11 @@ module.exports = {
     return true
   },
 
-  deleteTest: async (args) => {
+  deleteTest: async (args, context) => {
     const { teacherId, testId } = args
 
-    // TODO: verify teacher
+    if (!isTeacherAuthUser(context, teacherId))
+      return Promise.reject("Not allowed")
 
     await dbq(`DELETE FROM HAS_TEST WHERE TEST_ID='${testId}'`)
 
@@ -435,10 +460,10 @@ module.exports = {
     return true
   },
 
-  deletePupil: async (args) => {
+  deletePupil: async (args, context) => {
     const { adminId, id } = args
 
-    // TODO: Verify admin
+    if (!isAdminAuthUser(context, adminId)) return Promise.reject("Not allowed")
 
     await dbq(`DELETE FROM APPEARS_IN WHERE PUPIL_ID='${id}'`)
 
@@ -451,10 +476,10 @@ module.exports = {
     }
   },
 
-  deleteTeacher: async (args) => {
+  deleteTeacher: async (args, context) => {
     const { adminId, id } = args
 
-    // TODO: Verify admin
+    if (!isAdminAuthUser(context, adminId)) return Promise.reject("Not allowed")
 
     const mySubjectIdRows = await dbq(`
       SELECT SUBJECT.ID AS ID
@@ -486,10 +511,10 @@ module.exports = {
     }
   },
 
-  deleteClass: async (args) => {
+  deleteClass: async (args, context) => {
     const { adminId, class: className } = args
 
-    // TODO: verify admin
+    if (!isAdminAuthUser(context, adminId)) return Promise.reject("Not allowed")
 
     // Unassign pupils of this class
     await dbq(`DELETE FROM ASSIGNS WHERE CLASS_NAME='${className}'`)

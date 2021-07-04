@@ -8,6 +8,11 @@ function isPupilAuthUser(gqlContext, clientUserId) {
   return sessionUserId === clientUserId && sessionUserRole === "pupil"
 }
 
+function isTeacherAuthUser(gqlContext, clientUserId) {
+  const { sessionUserId, sessionUserRole } = gqlContext
+  return sessionUserId === clientUserId && sessionUserRole === "teacher"
+}
+
 function isAnyAdmin(gqlContext) {
   const { sessionUserRole } = gqlContext
   return sessionUserRole === "admin"
@@ -33,4 +38,5 @@ module.exports = {
   isNotTeacher,
   isPupilAuthUser,
   isAnyTeacher,
+  isTeacherAuthUser,
 }
