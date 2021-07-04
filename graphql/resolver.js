@@ -89,11 +89,30 @@ module.exports = {
       GROUP BY SUBJECT_ID, SUBJECT_NAME, CLASS_NAME;
     `)
 
-    return rows.map((row) => ({
+    const archivedResultRows = await dbq(`
+      WITH GRADES AS (
+        SELECT
+          ARCHIVED_SUBJECT.ID AS SUBJECT_ID, ARCHIVED_SUBJECT.NAME AS SUBJECT_NAME, APPEARS_IN.SCORE AS SCORE
+        
+        FROM 
+        HAS_TEST JOIN APPEARS_IN 
+          ON HAS_TEST.TEST_ID = APPEARS_IN.TEST_ID
+        JOIN ARCHIVED_SUBJECT
+          ON ARCHIVED_SUBJECT.ID = HAS_TEST.SUBJECT_ID
+        
+        WHERE APPEARS_IN.PUPIL_ID = '${pupilId}'
+      )
+
+      SELECT SUBJECT_ID, SUBJECT_NAME, AVG(SCORE) AS AVG_GRADE
+      FROM GRADES
+      GROUP BY SUBJECT_ID, SUBJECT_NAME;
+    `)
+
+    return [...rows, ...archivedResultRows].map((row) => ({
       subjectId: row.subject_id,
       subjectName: row.subject_name,
       avgGrade: row.avg_grade,
-      className: row.class_name,
+      className: row.class_name || "Archived",
     }))
   },
 
