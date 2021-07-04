@@ -290,4 +290,24 @@ module.exports = {
       message: "Deleted subject successfully",
     }
   },
+
+  assignPupil: async (args) => {
+    const { adminId, pupilId, class: className } = args
+
+    const classRows = await dbq(
+      `SELECT * FROM ASSIGNS WHERE PUPIL_ID='${pupilId}'`
+    )
+
+    if (classRows.length) {
+      // Reassign to another class
+      await dbq(
+        `UPDATE ASSIGNS SET CLASS_NAME='${className}' WHERE PUPIL_ID='${pupilId}'`
+      )
+    } else {
+      // Assign a classless pupil to a class
+      await dbq(`INSERT INTO ASSIGNS VALUES ('${className}', '${pupilId}');`)
+    }
+
+    return true
+  },
 }

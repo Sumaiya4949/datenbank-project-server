@@ -150,4 +150,6 @@ type Mutation {
   archiveSubjectByAdmin(adminId: ID!, subjectId: ID!): Subject
 
   deleteSubject(adminId: ID!, subjectId: ID!): Response!
+
+  assignPupil(adminId: ID!, pupilId: ID!, class: String!): Boolean!
 }
