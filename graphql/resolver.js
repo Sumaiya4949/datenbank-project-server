@@ -247,4 +247,41 @@ module.exports = {
     )
     return new Subject(archivedSubjectRows[0])
   },
+
+  deleteSubject: async (args) => {
+    const { adminId, subjectId } = args
+
+    // TODO: verify admin
+
+    const archivedSubjectRows = await dbq(
+      `SELECT ID FROM ARCHIVED_SUBJECT WHERE ID='${subjectId}'`
+    )
+
+    if (archivedSubjectRows.length)
+      return {
+        success: false,
+        message: "Cannot delete an archived subject",
+      }
+
+    const testRows = await dbq(
+      `SELECT TEST_ID FROM HAS_TEST WHERE SUBJECT_ID='${subjectId}'`
+    )
+
+    if (testRows.length)
+      return {
+        success: false,
+        message: "Cannot delete this subject because it has tests",
+      }
+
+    await dbq(`DELETE FROM HAS_TEST WHERE SUBJECT_ID='${subjectId}'`)
+    await dbq(`DELETE FROM TEACHES WHERE SUBJECT_ID='${subjectId}'`)
+    await dbq(`DELETE FROM OFFERS WHERE SUBJECT_ID='${subjectId}'`)
+
+    await dbq(`DELETE FROM SUBJECT WHERE ID='${subjectId}'`)
+
+    return {
+      success: true,
+      message: "Deleted subject successfully",
+    }
+  },
 }

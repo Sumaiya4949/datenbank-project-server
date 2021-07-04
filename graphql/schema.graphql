@@ -61,6 +61,11 @@ type TestResult {
   score: Float!
 }
 
+type Response {
+  success: Boolean!
+  message: String
+}
+
 ##########################
 # Queries
 ##########################
@@ -140,4 +145,6 @@ type Mutation {
   ): Subject
 
   archiveSubjectByAdmin(adminId: ID!, subjectId: ID!): Subject
+
+  deleteSubject(adminId: ID!, subjectId: ID!): Response!
 }
