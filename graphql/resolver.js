@@ -276,9 +276,21 @@ module.exports = {
 
     const subject = subjectRows[0]
 
-    await dbq(
-      `INSERT INTO ARCHIVED_SUBJECT VALUES('${subject.id}', '${subject.name}', FALSE)`
+    const alreadyExistingRows = await dbq(
+      `SELECT * FROM ARCHIVED_SUBJECT WHERE ID='${subject.id}'`
     )
+
+    if (alreadyExistingRows.length) {
+      // If subject was already archived indirectly, set it as "not duplicated"
+      await dbq(
+        `UPDATE ARCHIVED_SUBJECT SET IS_DUPLICATE=FALSE WHERE ID='${subject.id}'`
+      )
+    } else {
+      // Add the subject to archive table
+      await dbq(
+        `INSERT INTO ARCHIVED_SUBJECT VALUES('${subject.id}', '${subject.name}', FALSE)`
+      )
+    }
 
     const archivedSubjectRows = await dbq(
       `SELECT * FROM ARCHIVED_SUBJECT WHERE ID='${subject.id}'`
