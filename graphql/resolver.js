@@ -455,4 +455,70 @@ module.exports = {
       success: true,
     }
   },
+
+  deleteClass: async (args) => {
+    const { adminId, class: className } = args
+
+    // TODO: verify admin
+
+    // Unassign pupils of this class
+    await dbq(`DELETE FROM ASSIGNS WHERE CLASS_NAME='${className}'`)
+
+    // All archived subjects which are in this class
+    const archivedSubjectIdRows = await dbq(`
+      SELECT ARCHIVED_SUBJECT.ID AS ID
+      FROM
+      OFFERS JOIN ARCHIVED_SUBJECT
+        ON OFFERS.SUBJECT_ID = ARCHIVED_SUBJECT.ID
+      WHERE OFFERS.CLASS_NAME = '${className}'
+    `)
+
+    const archivedSubjectIds = archivedSubjectIdRows.map((row) => `'${row.id}'`)
+
+    // All unarchived subjects which are in this class
+    const unarchivedSubjectIdRows = archivedSubjectIds.length
+      ? await dbq(`
+          SELECT SUBJECT_ID AS ID
+          FROM OFFERS
+          WHERE 
+            SUBJECT_ID NOT IN (${archivedSubjectIds.join(", ")})
+            AND CLASS_NAME = '${className}'
+      `)
+      : await dbq(`
+          SELECT SUBJECT_ID AS ID
+          FROM OFFERS
+          WHERE CLASS_NAME = '${className}'
+      `)
+
+    const unarchivedSubjectIds = unarchivedSubjectIdRows.map(
+      (row) => `'${row.id}'`
+    )
+
+    if (unarchivedSubjectIds.length) {
+      // Delete teacher assignments of unarchived subjects
+      await dbq(
+        `DELETE FROM TEACHES 
+        WHERE SUBJECT_ID IN (${unarchivedSubjectIds.join(",")})`
+      )
+
+      // Delete class offers of unarchived subjects
+      await dbq(
+        `DELETE FROM OFFERS 
+        WHERE SUBJECT_ID IN (${unarchivedSubjectIds.join(",")})`
+      )
+
+      // Delete unarchived subjects
+      await dbq(
+        `DELETE FROM SUBJECT WHERE ID IN (${unarchivedSubjectIds.join(",")})`
+      )
+    }
+
+    // Delete class offers
+    await dbq(`DELETE FROM OFFERS WHERE CLASS_NAME='${className}'`)
+
+    // Delete actual class
+    await dbq(`DELETE FROM CLASS WHERE NAME='${className}'`)
+
+    return true
+  },
 }
