@@ -66,6 +66,13 @@ type Response {
   message: String
 }
 
+type GradeReport {
+  subjectId: ID!
+  subjectName: String!
+  className: String!
+  avgGrade: Float!
+}
+
 ##########################
 # Queries
 ##########################
@@ -94,6 +101,8 @@ type Query {
 
   # Permission: Admin
   subjects: [Subject!]!
+
+  gradesheet(pupilId: ID!): [GradeReport!]!
 }
 
 ##########################

@@ -65,6 +65,38 @@ module.exports = {
     return rows.map((row) => new Subject(row))
   },
 
+  gradesheet: async (args) => {
+    const { pupilId } = args
+
+    const rows = await dbq(`
+      WITH GRADES AS (
+        SELECT
+          SUBJECT.ID AS SUBJECT_ID, SUBJECT.NAME AS SUBJECT_NAME, OFFERS.CLASS_NAME AS CLASS_NAME, APPEARS_IN.SCORE AS SCORE
+        
+        FROM 
+        HAS_TEST JOIN APPEARS_IN 
+          ON HAS_TEST.TEST_ID = APPEARS_IN.TEST_ID
+        JOIN SUBJECT
+          ON SUBJECT.ID = HAS_TEST.SUBJECT_ID
+        JOIN OFFERS
+          ON SUBJECT.ID = OFFERS.SUBJECT_ID
+
+        WHERE APPEARS_IN.PUPIL_ID = '${pupilId}'
+      )
+
+      SELECT SUBJECT_ID, SUBJECT_NAME, CLASS_NAME, AVG(SCORE) AS AVG_GRADE
+      FROM GRADES
+      GROUP BY SUBJECT_ID, SUBJECT_NAME, CLASS_NAME;
+    `)
+
+    return rows.map((row) => ({
+      subjectId: row.subject_id,
+      subjectName: row.subject_name,
+      avgGrade: row.avg_grade,
+      className: row.class_name,
+    }))
+  },
+
   // Mutations
   editPupilInfo: async (args) => {
     const { id, userInfo } = args
