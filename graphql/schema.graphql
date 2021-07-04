@@ -137,4 +137,6 @@ type Mutation {
     teacherId: ID!
     name: String!
   ): Subject
+
+  archiveSubjectByAdmin(adminId: ID!, subjectId: ID!): Subject
 }

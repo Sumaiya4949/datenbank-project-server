@@ -224,4 +224,27 @@ module.exports = {
 
     return rows.length ? new Subject(rows[0]) : null
   },
+
+  archiveSubjectByAdmin: async (args) => {
+    const { adminId, subjectId } = args
+
+    // TODO: verify admin
+
+    const subjectRows = await dbq(
+      `SELECT * FROM SUBJECT WHERE ID='${subjectId}'`
+    )
+
+    if (subjectRows.length === 0) return Promise.reject("No subject")
+
+    const subject = subjectRows[0]
+
+    await dbq(
+      `INSERT INTO ARCHIVED_SUBJECT VALUES('${subject.id}', '${subject.name}')`
+    )
+
+    const archivedSubjectRows = await dbq(
+      `SELECT * FROM ARCHIVED_SUBJECT WHERE ID='${subject.id}'`
+    )
+    return new Subject(archivedSubjectRows[0])
+  },
 }
