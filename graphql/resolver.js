@@ -2,26 +2,35 @@ const { dbq } = require("../utils/db")
 const { Teacher, Pupil, Class, Test, Subject } = require("./types")
 const { v4: uuid } = require("uuid")
 const { getPasswordHash } = require("../utils/helpers")
+const { isNotAdmin } = require("./utils")
 
 module.exports = {
   // Queries
 
-  admins: async () => {
+  admins: async (_, context) => {
+    if (isNotAdmin(context)) return Promise.reject()
+
     const rows = await dbq("SELECT * FROM ADMIN;")
     return rows
   },
 
-  teachers: async () => {
+  teachers: async (_, context) => {
+    if (isNotAdmin(context)) return Promise.reject()
+
     const rows = await dbq("SELECT * FROM TEACHER;")
     return rows.map((row) => new Teacher(row))
   },
 
-  pupils: async () => {
+  pupils: async (_, context) => {
+    if (isNotAdmin(context)) return Promise.reject()
+
     const rows = await dbq("SELECT * FROM PUPIL;")
     return rows.map((row) => new Pupil(row))
   },
 
   classes: async (args) => {
+    if (isNotAdmin(context)) return Promise.reject()
+
     const rows = await dbq(
       args.name
         ? `SELECT * FROM CLASS WHERE NAME='${args.name}'`
@@ -31,7 +40,7 @@ module.exports = {
   },
 
   pupil: async (args) => {
-    // Verify if its the logged in student
+    // TODO: Verify if its the logged in student
 
     const pupilRows = await dbq(`SELECT * FROM PUPIL WHERE ID='${args.id}'`)
 
@@ -41,7 +50,7 @@ module.exports = {
   },
 
   teacher: async (args) => {
-    // Verify if its the logged in teacher
+    // TODO: Verify if its the logged in teacher
 
     const teacherRows = await dbq(`SELECT * FROM TEACHER WHERE ID='${args.id}'`)
 

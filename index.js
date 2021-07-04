@@ -45,10 +45,16 @@ async function createServer() {
 
   app.use(
     "/graphql",
-    graphqlHTTP({
-      schema: schema,
-      rootValue: rootResolver,
-      graphiql: true,
+    graphqlHTTP((req) => {
+      return {
+        schema: schema,
+        rootValue: rootResolver,
+        graphiql: true,
+        context: {
+          sessionUserId: req.session.userId,
+          sessionUserRole: req.session.userRole,
+        },
+      }
     })
   )
 

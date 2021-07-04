@@ -52,14 +52,14 @@ authRouter.post("/login", async function (req, res) {
 
     req.session.userRole = req.body.role
     req.session.userId = id
-    req.session.save()
-
-    res.json({
-      id,
-      surname,
-      forename,
-      username,
-    })
+    req.session.save(() =>
+      res.json({
+        id,
+        surname,
+        forename,
+        username,
+      })
+    )
   } catch (err) {
     console.log(err)
     res.sendStatus(400)
