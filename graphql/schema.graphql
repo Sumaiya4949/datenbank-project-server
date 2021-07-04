@@ -91,6 +91,9 @@ type Query {
 
   # Permission: Teacher
   test(id: ID!, teacherId: ID!): Test
+
+  # Permission: Admin
+  subjects: [Subject!]!
 }
 
 ##########################

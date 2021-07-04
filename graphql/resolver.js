@@ -59,6 +59,12 @@ module.exports = {
     return new Test(rows[0])
   },
 
+  subjects: async (args) => {
+    const rows = await dbq(`SELECT * FROM SUBJECT`)
+
+    return rows.map((row) => new Subject(row))
+  },
+
   // Mutations
   editPupilInfo: async (args) => {
     const { id, userInfo } = args
