@@ -196,6 +196,13 @@ class Subject {
 
     return pupils.map((pupil) => new Pupil(pupil))
   }
+
+  async isArchived() {
+    const rows = await dbq(
+      `SELECT * FROM ARCHIVED_SUBJECT WHERE ID='${this.id}'`
+    )
+    return !!rows?.length
+  }
 }
 
 class Class {

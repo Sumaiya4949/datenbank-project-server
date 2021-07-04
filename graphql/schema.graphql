@@ -35,10 +35,11 @@ type Class {
 type Subject {
   id: ID!
   name: String!
-  tests: [Test]!
 
+  tests: [Test]!
   pupils: [Pupil!]!
   className: String
+  isArchived: Boolean!
 }
 
 type Test {
