@@ -390,4 +390,18 @@ module.exports = {
 
     return true
   },
+
+  deleteTest: async (args) => {
+    const { teacherId, testId } = args
+
+    // TODO: verify teacher
+
+    await dbq(`DELETE FROM HAS_TEST WHERE TEST_ID='${testId}'`)
+
+    await dbq(`DELETE FROM APPEARS_IN WHERE TEST_ID='${testId}'`)
+
+    await dbq(`DELETE FROM TEST WHERE ID='${testId}'`)
+
+    return true
+  },
 }
