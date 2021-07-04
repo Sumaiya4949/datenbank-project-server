@@ -511,6 +511,28 @@ module.exports = {
       await dbq(
         `DELETE FROM SUBJECT WHERE ID IN (${unarchivedSubjectIds.join(",")})`
       )
+
+      // Delete tests and scores of unarchived subjects
+      const testIdRows = await dbq(
+        `SELECT TEST_ID AS ID 
+        FROM HAS_TEST WHERE SUBJECT_ID IN (${unarchivedSubjectIds.join(",")})`
+      )
+
+      const testIds = testIdRows.map((row) => `'${row.id}'`)
+
+      await dbq(
+        `DELETE FROM HAS_TEST 
+        WHERE SUBJECT_ID IN (${unarchivedSubjectIds.join(",")})`
+      )
+
+      if (testIds.length) {
+        await dbq(
+          `DELETE FROM APPEARS_IN 
+          WHERE TEST_ID IN (${testIds.join(",")})`
+        )
+
+        await dbq(`DELETE FROM TEST WHERE ID IN (${testIds.join(",")})`)
+      }
     }
 
     // Delete class offers
