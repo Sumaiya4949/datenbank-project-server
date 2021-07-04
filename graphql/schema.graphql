@@ -161,4 +161,6 @@ type Mutation {
   deleteSubject(adminId: ID!, subjectId: ID!): Response!
 
   assignPupil(adminId: ID!, pupilId: ID!, class: String!): Boolean!
+
+  deassignPupil(adminId: ID!, pupilId: ID!): Boolean!
 }

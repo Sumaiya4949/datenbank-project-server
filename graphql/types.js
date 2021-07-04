@@ -199,7 +199,7 @@ class Subject {
 
   async isArchived() {
     const rows = await dbq(
-      `SELECT * FROM ARCHIVED_SUBJECT WHERE ID='${this.id}'`
+      `SELECT * FROM ARCHIVED_SUBJECT WHERE ID='${this.id}' AND IS_DUPLICATE=FALSE`
     )
     return !!rows?.length
   }

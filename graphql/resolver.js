@@ -277,7 +277,7 @@ module.exports = {
     const subject = subjectRows[0]
 
     await dbq(
-      `INSERT INTO ARCHIVED_SUBJECT VALUES('${subject.id}', '${subject.name}')`
+      `INSERT INTO ARCHIVED_SUBJECT VALUES('${subject.id}', '${subject.name}', FALSE)`
     )
 
     const archivedSubjectRows = await dbq(
@@ -338,6 +338,42 @@ module.exports = {
     } else {
       // Assign a classless pupil to a class
       await dbq(`INSERT INTO ASSIGNS VALUES ('${className}', '${pupilId}');`)
+    }
+
+    return true
+  },
+
+  deassignPupil: async (args) => {
+    const { adminId, pupilId } = args
+
+    // TODO: VERIFY ADMIN
+
+    await dbq(`DELETE FROM ASSIGNS WHERE PUPIL_ID='${pupilId}'`)
+
+    const subjectRows = await dbq(`
+      WITH TEST_SUBJECT_IDS AS (
+        SELECT SUBJECT.ID AS ID
+        FROM 
+        HAS_TEST JOIN APPEARS_IN
+        ON HAS_TEST.TEST_ID = APPEARS_IN.TEST_ID
+        JOIN SUBJECT
+        ON SUBJECT.ID = HAS_TEST.SUBJECT_ID
+        WHERE APPEARS_IN.PUPIL_ID='${pupilId}'
+        GROUP BY SUBJECT.ID
+      )
+      SELECT ID, NAME
+      FROM SUBJECT NATURAL JOIN TEST_SUBJECT_IDS
+    `)
+
+    for (const row of subjectRows) {
+      const rows = await dbq(
+        `SELECT * FROM ARCHIVED_SUBJECT WHERE ID='${row.id}'`
+      )
+      if (!rows.length) {
+        await dbq(
+          `INSERT INTO ARCHIVED_SUBJECT VALUES('${row.id}', '${row.name}', TRUE)`
+        )
+      }
     }
 
     return true
