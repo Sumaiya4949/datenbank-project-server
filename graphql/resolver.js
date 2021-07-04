@@ -2,7 +2,7 @@ const { dbq } = require("../utils/db")
 const { Teacher, Pupil, Class, Test, Subject } = require("./types")
 const { v4: uuid } = require("uuid")
 const { getPasswordHash } = require("../utils/helpers")
-const { isNotAdmin } = require("./utils")
+const { isNotAdmin, isPupilAuthUser } = require("./utils")
 
 module.exports = {
   // Queries
@@ -126,8 +126,10 @@ module.exports = {
   },
 
   // Mutations
-  editPupilInfo: async (args) => {
+  editPupilInfo: async (args, context) => {
     const { id, userInfo } = args
+
+    if (!isPupilAuthUser(context, id)) return Promise.reject("Not allowed")
 
     const { forename, surname } = userInfo
 
