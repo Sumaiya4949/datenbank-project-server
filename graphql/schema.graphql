@@ -128,4 +128,6 @@ type Mutation {
 
   # Permission: Admin
   createUser(adminId: ID!, user: InputUser!): String!
+
+  createClass(adminId: ID!, class: String!): String!
 }

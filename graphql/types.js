@@ -208,6 +208,8 @@ class Class {
       `SELECT SUBJECT_ID AS ID FROM OFFERS WHERE CLASS_NAME='${this.name}'`
     )
 
+    if (subjectIdRows.length === 0) return []
+
     const subjectIds = subjectIdRows.map((row) => `'${row.id}'`)
 
     const subjectRows = await dbq(
@@ -221,6 +223,8 @@ class Class {
     const pupilIdRows = await dbq(
       `SELECT PUPIL_ID AS ID FROM ASSIGNS WHERE CLASS_NAME='${this.name}'`
     )
+
+    if (pupilIdRows.length === 0) return []
 
     const pupilIds = pupilIdRows.map((row) => `'${row.id}'`)
 

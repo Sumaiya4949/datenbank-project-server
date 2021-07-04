@@ -191,4 +191,21 @@ module.exports = {
       return Promise.reject(err.message)
     }
   },
+
+  createClass: async (args) => {
+    const { adminId, class: className } = args
+
+    // TODO: Verify admin by id
+
+    const rows = await dbq(`SELECT NAME FROM CLASS WHERE NAME='${className}'`)
+
+    if (rows.length) return Promise.reject("Class already exists")
+
+    try {
+      await dbq(`INSERT INTO CLASS VALUES ('${className}')`)
+      return className
+    } catch (err) {
+      return Promise.reject(err.message)
+    }
+  },
 }
