@@ -66,9 +66,9 @@ async function createServer() {
         await dbq(
           `INSERT INTO APPEARS_IN VALUES ('${grade[0]}', '${req.body.testId}', '${grade[1]}')`
         )
-      } catch {
+      } catch (err) {
         res.statusCode = 400
-        res.end()
+        res.end(err.message)
       }
     }
     res.end()
