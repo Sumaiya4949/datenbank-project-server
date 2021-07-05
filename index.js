@@ -7,7 +7,7 @@ const fs = require("fs")
 const cors = require("cors")
 const rootResolver = require("./graphql/resolver")
 const authRouter = require("./routers/auth")
-const { initDB } = require("./utils/db")
+const { initDB, dbq } = require("./utils/db")
 
 async function createServer() {
   await initDB()
@@ -57,6 +57,17 @@ async function createServer() {
       }
     })
   )
+
+  app.post("/save-test-grades", async function (req, res) {
+    const grades = req.body.grades
+    for (const grade of grades) {
+      if (grade.length !== 2) break
+      await dbq(
+        `INSERT INTO APPEARS_IN VALUES ('${grade[0]}', '${req.body.testId}', '${grade[1]}')`
+      )
+    }
+    res.end()
+  })
 
   app.listen("5000", () => {
     console.log(chalk.green("Success! Server running at localhost:5000"))
