@@ -62,9 +62,14 @@ async function createServer() {
     const grades = req.body.grades
     for (const grade of grades) {
       if (grade.length !== 2) break
-      await dbq(
-        `INSERT INTO APPEARS_IN VALUES ('${grade[0]}', '${req.body.testId}', '${grade[1]}')`
-      )
+      try {
+        await dbq(
+          `INSERT INTO APPEARS_IN VALUES ('${grade[0]}', '${req.body.testId}', '${grade[1]}')`
+        )
+      } catch {
+        res.statusCode = 400
+        res.end()
+      }
     }
     res.end()
   })
