@@ -61,7 +61,7 @@ async function createServer() {
   app.post("/save-test-grades", async function (req, res) {
     const grades = req.body.grades
     for (const grade of grades) {
-      if (grade.length !== 2) break
+      if (grade.length < 2) break
       try {
         await dbq(
           `INSERT INTO APPEARS_IN VALUES ('${grade[0]}', '${req.body.testId}', '${grade[1]}')`
@@ -71,7 +71,7 @@ async function createServer() {
         res.end(err.message)
       }
     }
-    res.end()
+    res.end("Saved")
   })
 
   app.listen("5000", () => {

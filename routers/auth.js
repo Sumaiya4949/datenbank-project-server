@@ -32,13 +32,10 @@ authRouter.post("/logout", async function (req, res) {
 })
 
 authRouter.post("/login", async function (req, res) {
-  const passwordHash = getPasswordHash(req.body.password)
-
   try {
     const rows = await dbq(
-      `SELECT * FROM ${req.body.role.toUpperCase()} WHERE USERNAME='${
-        req.body.username
-      }' AND PASSWORD='${passwordHash}'`
+      `SELECT * FROM ${req.body.role.toUpperCase()} 
+      WHERE USERNAME='${req.body.username}' AND PASSWORD='${req.body.password}'`
     )
 
     if (rows.length === 0) {

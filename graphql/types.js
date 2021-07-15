@@ -183,7 +183,7 @@ class Subject {
 
   async pupils() {
     const pupilIdRows = await dbq(
-      `SELECT PUPIL_ID AS ID FROM HAS_TEST NATURAL JOIN APPEARS_IN WHERE SUBJECT_ID='${this.id}'`
+      `SELECT PUPIL_ID AS ID FROM OFFERS JOIN ASSIGNS ON ASSIGNS.CLASS_NAME = OFFERS.CLASS_NAME WHERE SUBJECT_ID='${this.id}'`
     )
 
     if (pupilIdRows.length === 0) return []
