@@ -123,7 +123,12 @@ module.exports = {
       GROUP BY SUBJECT_ID, SUBJECT_NAME;
     `)
 
-    return [...rows, ...archivedResultRows].map((row) => ({
+    const allRows = [
+      ...rows, 
+      ...archivedResultRows.filter(ar => !rows.find(r => r.subject_id === ar.subject_id ))
+    ]
+
+    return allRows.map((row) => ({
       subjectId: row.subject_id,
       subjectName: row.subject_name,
       avgGrade: row.avg_grade,
