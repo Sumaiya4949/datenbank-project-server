@@ -124,8 +124,10 @@ module.exports = {
     `)
 
     const allRows = [
-      ...rows, 
-      ...archivedResultRows.filter(ar => !rows.find(r => r.subject_id === ar.subject_id ))
+      ...rows,
+      ...archivedResultRows.filter(
+        (ar) => !rows.find((r) => r.subject_id === ar.subject_id)
+      ),
     ]
 
     return allRows.map((row) => ({
@@ -550,48 +552,62 @@ module.exports = {
           WHERE CLASS_NAME = '${className}'
       `)
 
-    const unarchivedSubjectIds = unarchivedSubjectIdRows.map(
-      (row) => `'${row.id}'`
-    )
+    const unarchivedSubjectIds = unarchivedSubjectIdRows.map((row) => row.id)
 
     if (unarchivedSubjectIds.length) {
-      // Delete teacher assignments of unarchived subjects
-      await dbq(
-        `DELETE FROM TEACHES 
-        WHERE SUBJECT_ID IN (${unarchivedSubjectIds.join(",")})`
+      const subjectIdsHavingTestRows = await dbq(`
+        SELECT SUBJECT_ID FROM HAS_TEST
+        WHERE SUBJECT_ID 
+        IN (${unarchivedSubjectIds.map((id) => `'${id}'`).join(",")})
+      `)
+
+      const subjectIdsHavingTests = subjectIdsHavingTestRows.map(
+        (row) => row.subject_id
       )
 
-      // Delete class offers of unarchived subjects
-      await dbq(
-        `DELETE FROM OFFERS 
-        WHERE SUBJECT_ID IN (${unarchivedSubjectIds.join(",")})`
+      // Archive subjects that has tests
+      if (subjectIdsHavingTests.length) {
+        const subjectsToArchiveRows = await dbq(`
+          SELECT * FROM SUBJECT WHERE 
+          ID IN (${subjectIdsHavingTests.map((id) => `'${id}'`).join(",")})
+        `)
+
+        for (const row of subjectsToArchiveRows) {
+          await dbq(
+            `INSERT INTO ARCHIVED_SUBJECT VALUES ('${row.id}', '${row.name}', FALSE)`
+          )
+        }
+      }
+
+      const subjectIdsHavingNoTests = unarchivedSubjectIds.filter(
+        (id) => !subjectIdsHavingTests.includes(id)
       )
 
-      // Delete unarchived subjects
-      await dbq(
-        `DELETE FROM SUBJECT WHERE ID IN (${unarchivedSubjectIds.join(",")})`
-      )
-
-      // Delete tests and scores of unarchived subjects
-      const testIdRows = await dbq(
-        `SELECT TEST_ID AS ID 
-        FROM HAS_TEST WHERE SUBJECT_ID IN (${unarchivedSubjectIds.join(",")})`
-      )
-
-      const testIds = testIdRows.map((row) => `'${row.id}'`)
-
-      await dbq(
-        `DELETE FROM HAS_TEST 
-        WHERE SUBJECT_ID IN (${unarchivedSubjectIds.join(",")})`
-      )
-
-      if (testIds.length) {
-        await dbq(
-          `DELETE FROM APPEARS_IN 
-          WHERE TEST_ID IN (${testIds.join(",")})`
+      // Delete subjects that deserves to be deleted
+      if (subjectIdsHavingNoTests.length) {
+        const subjectIdsHavingNoTestsWithQuote = subjectIdsHavingNoTests.map(
+          (id) => `'${id}'`
         )
 
-        await dbq(`DELETE FROM TEST WHERE ID IN (${testIds.join(",")})`)
+        // Delete teacher assignments
+        await dbq(
+          `DELETE FROM TEACHES 
+            WHERE SUBJECT_ID IN (${subjectIdsHavingNoTestsWithQuote.join(",")})`
+        )
+
+        // Delete class offers
+        await dbq(
+          `DELETE FROM OFFERS 
+              WHERE SUBJECT_ID IN (${subjectIdsHavingNoTestsWithQuote.join(
+                ","
+              )})`
+        )
+
+        // Delete subjects
+        await dbq(
+          `DELETE FROM SUBJECT WHERE ID 
+                IN (${subjectIdsHavingNoTestsWithQuote.join(",")})`
+        )
       }
     }
 
